@@ -29,7 +29,7 @@ Anda punya masalah sama bocil di komen ? Atau Anda sedang adu bacot sama fans cl
 * `git clone https://github.com/MRM05T3R/SmsNCS`
 * `bash install.sh`
 * `cd SmsNCS`
-* `python SmsNCS.py`
+* `python3 SmsNCS.py`
 
 ## WARNING : 
 Gunakan Script Ini Dengan Baik Dan Bijak (Resiko Ditanggu Sendiri).
