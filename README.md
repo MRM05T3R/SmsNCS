@@ -25,7 +25,7 @@ Anda punya masalah sama bocil di komen ? Atau Anda sedang adu bacot sama fans cl
 * `pkg update && pkg upgrade`
 * `pkg install nano`
 * `pkg install git`
-* `pkg install python`
+* `pkg install python3`
 * `git clone https://github.com/MRM05T3R/SmsNCS`
 * `bash install.sh`
 * `cd SmsNCS`
